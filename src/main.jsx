@@ -7,7 +7,7 @@ import Submit from "./Submit";
 function Home() {
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Welcome to Rowvember 🚣‍♂️</h1>
+      <h1>Welcome to Rowvember</h1>
       <p>
         Visit the <a href="/admin">Admin Dashboard</a> to manage entries.
       </p>
