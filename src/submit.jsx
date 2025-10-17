@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://sjsxuggvmvkpugdempcg.supabase.co";
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(
+  "https://sjsxuggvmvkpugdempcg.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqc3h1Z2d2bXZrcHVnZGVtcGNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MjU1OTAsImV4cCI6MjA3MzIwMTU5MH0.TgxrNz2DcPE0qsDFX7OWgQFZNR_ydOGcbk7W3haZWWs"
+);
 
 export default function Submit() {
   const [name, setName] = useState("");
@@ -29,37 +30,65 @@ export default function Submit() {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "2rem auto", textAlign: "center" }}>
-      <h1>Rowvember Submission Form 🚣‍♂️</h1>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Meters Rowed"
-          value={meters}
-          onChange={(e) => setMeters(e.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Notes (optional)"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows="3"
-        />
-        <button type="submit" style={{ padding: "0.75rem", cursor: "pointer" }}>
+    <div style={{ padding: "2rem", textAlign: "center", fontFamily: "Arial, sans-serif" }}>
+      <h1>Rowvember Public Submission</h1>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "inline-block",
+          textAlign: "left",
+          background: "#f5f5f5",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        }}
+      >
+        <div style={{ marginBottom: "10px" }}>
+          <label>Name:</label>
+          <br />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            style={{ width: "100%", padding: "8px" }}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Meters:</label>
+          <br />
+          <input
+            type="number"
+            value={meters}
+            onChange={(e) => setMeters(e.target.value)}
+            required
+            style={{ width: "100%", padding: "8px" }}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Notes:</label>
+          <br />
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            style={{ width: "100%", padding: "8px" }}
+          />
+        </div>
+        <button
+          type="submit"
+          style={{
+            backgroundColor: "#007bff",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
           Submit
         </button>
       </form>
-      {message && <p style={{ marginTop: "1rem" }}>{message}</p>}
-      <p style={{ marginTop: "2rem" }}>
-        <a href="/">🏠 Back to Home</a>
-      </p>
+      <p style={{ marginTop: "20px", fontWeight: "bold" }}>{message}</p>
     </div>
   );
 }
