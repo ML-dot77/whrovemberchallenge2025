@@ -14,7 +14,6 @@ export default function Submit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { error } = await supabase
       .from("rowvember_entries")
       .insert([{ name, meters: parseInt(meters), notes }]);
@@ -30,65 +29,41 @@ export default function Submit() {
   };
 
   return (
-    <div style={{ padding: "2rem", textAlign: "center", fontFamily: "Arial, sans-serif" }}>
-      <h1>Rowvember Public Submission</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "inline-block",
-          textAlign: "left",
-          background: "#f5f5f5",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
-        <div style={{ marginBottom: "10px" }}>
-          <label>Name:</label>
-          <br />
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Meters:</label>
-          <br />
-          <input
-            type="number"
-            value={meters}
-            onChange={(e) => setMeters(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Notes:</label>
-          <br />
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Submit
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>🚣 Rowvember Submission</h1>
+      <form onSubmit={handleSubmit} style={{ marginTop: "1rem" }}>
+        <input
+          type="text"
+          placeholder="Your Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={{ margin: "0.5rem", padding: "0.5rem" }}
+        />
+        <input
+          type="number"
+          placeholder="Meters"
+          value={meters}
+          onChange={(e) => setMeters(e.target.value)}
+          required
+          style={{ margin: "0.5rem", padding: "0.5rem" }}
+        />
+        <input
+          type="text"
+          placeholder="Notes (optional)"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          style={{ margin: "0.5rem", padding: "0.5rem" }}
+        />
+        <br />
+        <button type="submit" style={{ marginTop: "1rem", padding: "0.5rem 1rem" }}>
+          Submit Entry
         </button>
       </form>
-      <p style={{ marginTop: "20px", fontWeight: "bold" }}>{message}</p>
+      {message && <p style={{ marginTop: "1rem" }}>{message}</p>}
+      <a href="/" style={{ display: "block", marginTop: "2rem" }}>
+        🔙 Back to Home
+      </a>
     </div>
   );
 }
