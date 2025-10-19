@@ -113,9 +113,55 @@ export default function Admin() {
                       type="number"
                       value={editData.meters}
                       onChange={(e) => setEditData({ ...editData, meters: e.target.value })}
+                                       onChange={(e) =>
+                        setEditData({ ...editData, notes: e.target.value })
+                      }
                     />
                   </td>
                   <td>
-                    <input
-                      value={editData.notes}
-                      onChange={(e) => s
+                    <button onClick={handleEditSubmit}>Save</button>
+                    <button onClick={() => setEditing(null)}>Cancel</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td style={{ padding: "8px", border: "1px solid #333" }}>{entry.name}</td>
+                  <td style={{ padding: "8px", border: "1px solid #333" }}>{entry.meters}</td>
+                  <td style={{ padding: "8px", border: "1px solid #333" }}>{entry.notes}</td>
+                  <td style={{ padding: "8px", border: "1px solid #333" }}>
+                    <button
+                      onClick={() => {
+                        setEditing(entry.id);
+                        setEditData({
+                          name: entry.name,
+                          meters: entry.meters,
+                          notes: entry.notes || "",
+                        });
+                      }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(entry.id)}
+                      style={{
+                        background: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "4px 8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
