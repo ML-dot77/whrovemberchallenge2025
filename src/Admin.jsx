@@ -1,125 +1,142 @@
 import React, { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from "./supabaseClient";
 
 export default function Admin() {
   const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [password, setPassword] = useState("");
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [editData, setEditData] = useState({ name: "", meters: "", notes: "" });
 
-  // Fetch data from Supabase
+  const ADMIN_PASSWORD = "rowvember2025"; // 🔐 you can change this anytime
+
   useEffect(() => {
-    fetchEntries();
-  }, []);
+    if (isAuthed) fetchEntries();
+  }, [isAuthed]);
 
   async function fetchEntries() {
-    setLoading(true);
     const { data, error } = await supabase
       .from("rowvember_entries")
       .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      setError(error.message);
-    } else {
-      setEntries(data);
-    }
-    setLoading(false);
+      .order("meters", { ascending: false });
+    if (!error) setEntries(data);
   }
 
-  async function deleteEntry(id) {
-    const { error } = await supabase.from("rowvember_entries").delete().eq("id", id);
-    if (error) alert("Error deleting entry: " + error.message);
-    else fetchEntries();
+  async function handleDelete(id) {
+    if (!window.confirm("Delete this entry?")) return;
+    await supabase.from("rowvember_entries").delete().eq("id", id);
+    fetchEntries();
   }
 
-  // Calculate total meters
-  const totalMeters = entries.reduce((sum, e) => sum + (e.meters || 0), 0);
+  async function handleEditSubmit(e) {
+    e.preventDefault();
+    await supabase
+      .from("rowvember_entries")
+      .update(editData)
+      .eq("id", editing);
+    setEditing(null);
+    fetchEntries();
+  }
+
+  if (!isAuthed) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "4rem" }}>
+        <h2>Admin Login</h2>
+        <input
+          type="password"
+          placeholder="Enter admin password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br />
+        <button
+          style={{ marginTop: "1rem" }}
+          onClick={() => {
+            if (password === ADMIN_PASSWORD) setIsAuthed(true);
+            else alert("Incorrect password");
+          }}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1>Rowvember Admin Dashboard 🧮</h1>
-
-      {loading && <p>Loading entries...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {!loading && (
-        <>
-          <h3>Total Meters Rowed: {totalMeters.toLocaleString()} m</h3>
-
-          {/* Chart */}
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={entries}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="meters" fill="#0088FE" />
-            </BarChart>
-          </ResponsiveContainer>
-
-          {/* Data Table */}
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              marginTop: "2rem",
-            }}
-          >
-            <thead>
-              <tr style={{ background: "#f3f3f3" }}>
-                <th style={{ border: "1px solid #ccc", padding: "8px" }}>Name</th>
-                <th style={{ border: "1px solid #ccc", padding: "8px" }}>Meters</th>
-                <th style={{ border: "1px solid #ccc", padding: "8px" }}>Date</th>
-                <th style={{ border: "1px solid #ccc", padding: "8px" }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map((entry) => (
-                <tr key={entry.id}>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {entry.name}
+    <div style={{ padding: "2rem" }}>
+      <h1>Admin Dashboard</h1>
+      <table border="1" cellPadding="8" style={{ width: "100%" }}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Meters</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map((entry) => (
+            <tr key={entry.id}>
+              {editing === entry.id ? (
+                <>
+                  <td>
+                    <input
+                      value={editData.name}
+                      onChange={(e) =>
+                        setEditData({ ...editData, name: e.target.value })
+                      }
+                    />
                   </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {entry.meters}
+                  <td>
+                    <input
+                      type="number"
+                      value={editData.meters}
+                      onChange={(e) =>
+                        setEditData({ ...editData, meters: e.target.value })
+                      }
+                    />
                   </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                    {new Date(entry.created_at).toLocaleDateString()}
+                  <td>
+                    <input
+                      value={editData.notes}
+                      onChange={(e) =>
+                        setEditData({ ...editData, notes: e.target.value })
+                      }
+                    />
                   </td>
-                  <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  <td>
+                    <button onClick={handleEditSubmit}>Save</button>
+                    <button onClick={() => setEditing(null)}>Cancel</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td>{entry.name}</td>
+                  <td>{entry.meters}</td>
+                  <td>{entry.notes}</td>
+                  <td>
                     <button
-                      onClick={() => deleteEntry(entry.id)}
-                      style={{
-                        backgroundColor: "red",
-                        color: "white",
-                        border: "none",
-                        padding: "6px 10px",
-                        borderRadius: "4px",
-                        cursor: "pointer",
+                      onClick={() => {
+                        setEditing(entry.id);
+                        setEditData({
+                          name: entry.name,
+                          meters: entry.meters,
+                          notes: entry.notes || "",
+                        });
                       }}
                     >
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(entry.id)}>
                       Delete
                     </button>
                   </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
