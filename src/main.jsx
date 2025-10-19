@@ -6,6 +6,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Submit from "./Submit.jsx";
 import Leaderboard from "./Leaderboard.jsx";
+import Admin from "./Admin.jsx";
 
 function Home() {
   return (
@@ -70,6 +71,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/" element={<Home />} />
         <Route path="/submit" element={<Submit />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+	<Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
