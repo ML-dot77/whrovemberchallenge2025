@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Submit from "./Submit.jsx";
 import Leaderboard from "./Leaderboard.jsx";
 import Admin from "./Admin.jsx";
+import "./index.css";
+
 
 function Home() {
   return (

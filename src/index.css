@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* fallback so the page is dark even if Tailwind hasn't loaded yet */
+body { background: #000; color: #fff; }
